@@ -1,3 +1,7 @@
+input_images_*
+data/
+.gradio
+
 .hydra/
 output/
 ckpt/

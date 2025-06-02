@@ -10,7 +10,7 @@ import os
 class PointSelector:
     """Interactive point selector for images and videos."""
 
-    def __init__(self, input_path: str):
+    def __init__(self, input_path: str, save_dir: str):
         """
         Initialize the point selector.
 
@@ -24,7 +24,7 @@ class PointSelector:
         self.image = None
         self.original_image = None
 
-        self.save_dir = os.path.dirname(input_path)
+        self.save_dir = save_dir
 
         if not self.input_path.exists():
             raise FileNotFoundError(f"Input file not found: {input_path}")
@@ -188,7 +188,7 @@ class PointSelector:
         plt.show()
 
 
-def select_tracking_points(input_path: str) -> List[List[int]]:
+def select_tracking_points(input_path: str, save_dir: str) -> List[List[int]]:
     """
     Main function to select tracking points from an image or video.
 
@@ -199,7 +199,7 @@ def select_tracking_points(input_path: str) -> List[List[int]]:
         List of selected points as [x, y] coordinates
     """
     try:
-        selector = PointSelector(input_path)
+        selector = PointSelector(input_path, save_dir)
         selector.run()
         return selector.points
     except Exception as e:
@@ -210,12 +210,18 @@ def select_tracking_points(input_path: str) -> List[List[int]]:
 if __name__ == "__main__":
     import sys
 
-    if len(sys.argv) != 2:
-        print("Usage: python get_tracking_points.py <image_or_video_path>")
+    if len(sys.argv) != 2 and len(sys.argv) != 3:
+        print("Usage: python get_tracking_points.py <image_or_video_path> [save_dir]")
         sys.exit(1)
 
     input_file = sys.argv[1]
-    points = select_tracking_points(input_file)
+    if len(sys.argv) == 3:
+        save_dir = sys.argv[2]
+    else:
+        save_dir = os.path.dirname(input_file)
+
+    print(f"Points will be saved to {save_dir}")
+    points = select_tracking_points(input_file, save_dir)
 
     if points:
         print(f"\nSelected {len(points)} points:")

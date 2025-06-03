@@ -70,7 +70,7 @@ class TrackHead(nn.Module):
 
         self.iters = iters
 
-    def forward(self, aggregated_tokens_list, images, patch_start_idx, query_points=None, iters=None):
+    def forward(self, aggregated_tokens_list, images, patch_start_idx, query_points=None, iters=None, return_feat=False, query_img_idx=0):
         """
         Forward pass of the TrackHead.
 
@@ -100,10 +100,24 @@ class TrackHead(nn.Module):
             iters = self.iters
 
         # Perform tracking using the extracted features
-        coord_preds, vis_scores, conf_scores = self.tracker(
-            query_points=query_points,
-            fmaps=feature_maps,
-            iters=iters,
-        )
+        if not return_feat:
+            coord_preds, vis_scores, conf_scores = self.tracker(
+                query_points=query_points,
+                fmaps=feature_maps,
+                return_feat=return_feat,
+                iters=iters,
+                query_img_idx=query_img_idx,
+            )
 
-        return coord_preds, vis_scores, conf_scores
+            return coord_preds, vis_scores, conf_scores
+        else:
+            coord_preds, vis_scores, track_feats, query_track_feat, conf_scores = self.tracker(
+                query_points=query_points,
+                fmaps=feature_maps,
+                return_feat=return_feat,
+                iters=iters,
+                query_img_idx=query_img_idx,
+            )
+
+            return coord_preds, vis_scores, track_feats, query_track_feat, conf_scores
+

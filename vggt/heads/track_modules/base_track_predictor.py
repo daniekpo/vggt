@@ -79,7 +79,7 @@ class BaseTrackerPredictor(nn.Module):
         if predict_conf:
             self.conf_predictor = nn.Sequential(nn.Linear(self.latent_dim, 1))
 
-    def forward(self, query_points, fmaps=None, iters=6, return_feat=False, down_ratio=1, apply_sigmoid=True):
+    def forward(self, query_points, fmaps=None, iters=6, return_feat=False, down_ratio=1, apply_sigmoid=True, query_img_idx=0):
         """
         query_points: B x N x 2, the number of batches, tracks, and xy
         fmaps: B x S x C x HH x WW, the number of batches, frames, and feature dimension.
@@ -108,7 +108,7 @@ class BaseTrackerPredictor(nn.Module):
         coords = query_points.clone().reshape(B, 1, N, 2).repeat(1, S, 1, 1)
 
         # Sample/extract the features of the query points in the query frame
-        query_track_feat = sample_features4d(fmaps[:, 0], coords[:, 0])
+        query_track_feat = sample_features4d(fmaps[:, query_img_idx], coords[:, 0])
 
         # init track feats by query feats
         track_feats = query_track_feat.unsqueeze(1).repeat(1, S, 1, 1)  # B, S, N, C

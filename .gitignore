@@ -1,6 +1,7 @@
 input_images_*
 data/
 .gradio
+track_visuals/
 
 .hydra/
 output/

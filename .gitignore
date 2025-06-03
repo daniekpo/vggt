@@ -1,3 +1,6 @@
+.gradio
+input_images_*/
+track_visuals/
 .hydra/
 output/
 ckpt/
